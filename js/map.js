@@ -1,3 +1,5 @@
+import { drawLoadedImage } from "./image-assets.js";
+
 // 게임 맵은 1000x600 논리 좌표를 사용해 화면 크기와 무관하게 동작합니다.
 export const MAP_WIDTH = 1000;
 export const MAP_HEIGHT = 600;
@@ -123,26 +125,29 @@ export class GameMap {
     const center = this.getTileCenter(CORE_TILE.col, CORE_TILE.row);
     const ratio = Math.max(0, coreHp / maxCoreHp);
     ctx.save();
-    ctx.shadowColor = "#64f3c1";
-    ctx.shadowBlur = 22;
-    ctx.fillStyle = "#153f3d";
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, 31, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = "#75f3d0";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, 23, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = "#b5ffe8";
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y - 15);
-    ctx.lineTo(center.x + 13, center.y);
-    ctx.lineTo(center.x, center.y + 15);
-    ctx.lineTo(center.x - 13, center.y);
-    ctx.closePath();
-    ctx.fill();
+    const hasImage = drawLoadedImage(ctx, "core", center.x - 37, center.y - 37, 74, 74);
+    if (!hasImage) {
+      ctx.shadowColor = "#64f3c1";
+      ctx.shadowBlur = 22;
+      ctx.fillStyle = "#153f3d";
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 31, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = "#75f3d0";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 23, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = "#b5ffe8";
+      ctx.beginPath();
+      ctx.moveTo(center.x, center.y - 15);
+      ctx.lineTo(center.x + 13, center.y);
+      ctx.lineTo(center.x, center.y + 15);
+      ctx.lineTo(center.x - 13, center.y);
+      ctx.closePath();
+      ctx.fill();
+    }
     ctx.restore();
 
     ctx.fillStyle = "#b4c9c7";
