@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="덱빌딩 웨이브 디펜스 프로토타입, 코어 가디언즈"
+    />
+    <title>코어 가디언즈 | Core Guardians</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <!-- 브랜드와 실시간 코어/웨이브/에너지 상태 -->
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">◆</span>
+          <div>
+            <p class="eyebrow">CORE DEFENSE PROTOCOL</p>
+            <h1>코어 가디언즈</h1>
+          </div>
+        </div>
+
+        <section class="hud" aria-label="게임 상태">
+          <div class="hud-item">
+            <span class="hud-label">코어 HP</span>
+            <strong id="core-hp">100 / 100</strong>
+            <div class="hp-track" aria-hidden="true">
+              <span id="core-hp-bar"></span>
+            </div>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">웨이브</span>
+            <strong id="wave-count">1 / 10</strong>
+          </div>
+          <div class="hud-item energy-item">
+            <span class="hud-label">에너지</span>
+            <strong><span aria-hidden="true">✦</span> <span id="energy-count">10</span></strong>
+          </div>
+        </section>
+      </header>
+
+      <!-- 10x6 게임 맵은 Canvas에서 렌더링합니다. -->
+      <section class="board-panel" aria-label="게임 보드">
+        <div class="board-heading">
+          <div>
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="phase-label">건설 단계</span>
+          </div>
+          <span class="board-hint">카드를 선택한 뒤 빈 타일을 클릭하세요</span>
+        </div>
+        <canvas
+          id="game-canvas"
+          width="1000"
+          height="600"
+          aria-label="10열 6행 코어 디펜스 게임 맵"
+        ></canvas>
+      </section>
+
+      <!-- 카드 선택과 웨이브 제어는 Canvas 밖의 HTML UI로 처리합니다. -->
+      <section class="deck-panel" aria-label="카드 손패와 웨이브 제어">
+        <div class="deck-heading">
+          <div>
+            <p class="eyebrow">YOUR LOADOUT</p>
+            <h2>전술 카드 <span>4</span></h2>
+          </div>
+          <p id="game-message" class="game-message" aria-live="polite">
+            가디언을 배치하고 코어를 방어하세요.
+          </p>
+        </div>
+        <div class="deck-controls">
+          <div id="hand" class="hand" aria-label="보유 카드"></div>
+          <button id="start-wave" class="start-button" type="button">
+            <span aria-hidden="true">▶</span>
+            웨이브 시작
+          </button>
+        </div>
+      </section>
+      <footer class="footer-note">CORE GUARDIANS <span>·</span> HTML5 CANVAS PROTOTYPE</footer>
+    </main>
+    <!-- ES 모듈 엔트리에서 게임 시스템을 초기화합니다. -->
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
