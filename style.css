@@ -206,6 +206,31 @@ h1 {
   cursor: not-allowed;
 }
 
+.speed-button {
+  min-width: 54px;
+  min-height: 42px;
+  border: 1px solid #416173;
+  border-radius: 10px;
+  color: #a7e2ff;
+  background: linear-gradient(145deg, #1d3442, #13232d);
+  font: 700 13px "DM Mono", monospace;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.speed-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--cyan);
+  background: #1d3848;
+}
+
+.speed-button[aria-pressed="true"] {
+  border-color: #75d8ff;
+  color: #071821;
+  background: linear-gradient(135deg, #9ce5ff, #5fbfe9);
+  box-shadow: 0 0 16px rgb(98 201 255 / 24%);
+}
+
 .board-panel,
 .deck-panel {
   overflow: hidden;
@@ -239,6 +264,21 @@ h1 {
   font-size: 11px;
 }
 
+.board-heading-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.map-indicator {
+  padding: 4px 8px;
+  border: 1px solid #38594f;
+  border-radius: 999px;
+  color: #a4e8d0;
+  background: rgb(100 243 193 / 6%);
+  font-size: 10px;
+}
+
 .canvas-wrap {
   position: relative;
   width: 100%;
@@ -268,6 +308,53 @@ h1 {
   margin-top: 17px;
   padding: 17px 19px 19px;
   overflow: visible;
+}
+
+.tower-upgrade-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 14px 18px;
+  border: 1px solid #36554f;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 0 0, rgb(100 243 193 / 9%), transparent 50%),
+    #101b21;
+}
+
+.tower-upgrade-panel .eyebrow {
+  margin-bottom: 4px;
+}
+
+.tower-upgrade-panel h2 {
+  font-size: 15px;
+}
+
+.upgrade-stats {
+  margin: 5px 0 0;
+  color: #91a5ad;
+  font-size: 11px;
+}
+
+.upgrade-button {
+  min-width: 118px;
+  padding: 10px 14px;
+  border: 1px solid #56d7aa;
+  border-radius: 9px;
+  color: #082018;
+  background: linear-gradient(135deg, #7aefc5, #48bd91);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.upgrade-button:disabled {
+  border-color: #3a4b51;
+  color: #82939d;
+  background: #1b282f;
+  cursor: not-allowed;
 }
 
 .deck-heading {
@@ -303,6 +390,7 @@ h2 span {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: end;
   gap: 12px;
+  width: 100%;
   min-height: 142px;
   padding: 8px 4px 5px;
 }
@@ -385,6 +473,39 @@ h2 span {
   font: 11px "DM Mono", monospace;
 }
 
+.card-rank {
+  position: absolute;
+  top: 34px;
+  right: 12px;
+  color: #b6c8ce;
+  font: 9px "DM Mono", monospace;
+}
+
+.card.fusion-available {
+  border-color: #b89a5c;
+  box-shadow: 0 0 16px rgb(255 209 102 / 13%);
+}
+
+.card.fusion-available::after {
+  position: absolute;
+  right: 9px;
+  bottom: 8px;
+  padding: 3px 6px;
+  border: 1px solid rgb(255 209 102 / 48%);
+  border-radius: 999px;
+  color: #ffdf91;
+  background: #2b2619;
+  content: "합성 가능";
+  font-size: 9px;
+}
+
+.card.fusion-selected {
+  z-index: 3;
+  transform: translateY(-7px);
+  border-color: var(--mint);
+  box-shadow: 0 0 0 2px rgb(100 243 193 / 28%), 0 12px 24px rgb(0 0 0 / 35%);
+}
+
 .card-tooltip {
   position: absolute;
   z-index: 4;
@@ -412,7 +533,60 @@ h2 span {
 }
 
 .deck-controls {
+  flex-direction: column;
   align-items: stretch;
+  gap: 10px;
+}
+
+.fusion-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.fusion-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.fusion-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.fusion-button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid #536648;
+  border-radius: 8px;
+  color: #f3d994;
+  background: linear-gradient(135deg, #332e20, #24251f);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 140ms ease, filter 140ms ease, transform 140ms ease;
+}
+
+.fusion-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #f0cd76;
+  filter: brightness(1.12);
+}
+
+.fusion-button[aria-pressed="true"] {
+  border-color: var(--mint);
+  color: #06241a;
+  background: linear-gradient(135deg, #9affd9, #62d9ad);
+}
+
+.fusion-button:disabled {
+  border-color: #33434a;
+  color: #667780;
+  background: #18232a;
+  cursor: not-allowed;
 }
 
 .footer-note {
@@ -475,6 +649,45 @@ h2 span {
 .modal-action {
   min-width: 190px;
   margin: 25px auto 0;
+}
+
+.difficulty-control {
+  display: grid;
+  width: min(100%, 300px);
+  gap: 8px;
+  margin: 21px auto 0;
+  color: #b6c6cd;
+  font-size: 12px;
+  text-align: left;
+}
+
+.difficulty-control select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #3b5662;
+  border-radius: 9px;
+  color: #e7f2f4;
+  background: #0c171e;
+  font: inherit;
+}
+
+.difficulty-control select:focus-visible {
+  outline: 2px solid #71dfbd;
+  outline-offset: 2px;
+}
+
+.difficulty-control + .difficulty-control {
+  margin-top: 12px;
+}
+
+.result-difficulty {
+  display: inline-block;
+  padding: 6px 11px;
+  border: 1px solid #3a5660;
+  border-radius: 999px;
+  color: #a7e2ff !important;
+  background: rgb(98 201 255 / 8%);
+  font-size: 11px !important;
 }
 
 .reward-modal {
@@ -548,8 +761,25 @@ h2 span {
     text-align: right;
   }
 
+  .board-heading-meta {
+    gap: 6px;
+  }
+
+  .map-indicator {
+    font-size: 9px;
+  }
+
   .deck-panel {
     padding: 14px;
+  }
+
+  .tower-upgrade-panel {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .upgrade-button {
+    min-width: 94px;
   }
 
   .hand {
@@ -560,6 +790,11 @@ h2 span {
 
   .card {
     min-height: 112px;
+  }
+
+  .fusion-controls {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .modal-card {
@@ -581,6 +816,11 @@ h2 span {
     min-width: 124px;
     padding: 9px 10px;
     font-size: 12px;
+  }
+
+  .speed-button {
+    min-width: 48px;
+    min-height: 39px;
   }
 
   .deck-heading {

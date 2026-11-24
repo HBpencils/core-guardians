@@ -7,27 +7,70 @@ export const GRID_COLUMNS = 10;
 export const GRID_ROWS = 6;
 export const TILE_SIZE = MAP_WIDTH / GRID_COLUMNS;
 
-export const WAYPOINT_TILES = [
-  { col: 0, row: 2 },
-  { col: 3, row: 2 },
-  { col: 3, row: 4 },
-  { col: 5, row: 4 },
-  { col: 5, row: 3 },
-];
-
 const CORE_TILE = { col: 5, row: 3 };
 
+// 모든 경로는 가장자리에서 시작해 코어 타일에 도착합니다.
+export const MAPS = {
+  classic: {
+    id: "classic",
+    name: "기본 경로",
+    coreTile: CORE_TILE,
+    waypointTiles: [
+      { col: 0, row: 2 },
+      { col: 3, row: 2 },
+      { col: 3, row: 4 },
+      { col: 5, row: 4 },
+      { col: 5, row: 3 },
+    ],
+  },
+  serpentine: {
+    id: "serpentine",
+    name: "구불길",
+    coreTile: CORE_TILE,
+    waypointTiles: [
+      { col: 0, row: 0 },
+      { col: 4, row: 0 },
+      { col: 4, row: 2 },
+      { col: 1, row: 2 },
+      { col: 1, row: 5 },
+      { col: 5, row: 5 },
+      { col: 5, row: 3 },
+    ],
+  },
+  canyon: {
+    id: "canyon",
+    name: "수정 협곡",
+    coreTile: CORE_TILE,
+    waypointTiles: [
+      { col: 0, row: 5 },
+      { col: 0, row: 1 },
+      { col: 3, row: 1 },
+      { col: 3, row: 4 },
+      { col: 5, row: 4 },
+      { col: 5, row: 3 },
+    ],
+  },
+};
+
+export const DEFAULT_MAP_ID = "classic";
+// 기존 외부 호출자를 위해 기본 맵 경로 export도 유지합니다.
+export const WAYPOINT_TILES = MAPS[DEFAULT_MAP_ID].waypointTiles;
+
 export class GameMap {
-  constructor() {
+  constructor(mapId = DEFAULT_MAP_ID) {
+    this.definition = MAPS[mapId] || MAPS[DEFAULT_MAP_ID];
+    this.mapId = this.definition.id;
+    this.coreTile = this.definition.coreTile;
+    this.waypointTiles = this.definition.waypointTiles;
     // 경로는 타일 중심을 잇고, 모든 유닛은 이 좌표를 따라 이동합니다.
-    this.waypoints = WAYPOINT_TILES.map(({ col, row }) => ({
+    this.waypoints = this.waypointTiles.map(({ col, row }) => ({
       x: col * TILE_SIZE + TILE_SIZE / 2,
       y: row * TILE_SIZE + TILE_SIZE / 2,
     }));
 
     this.pathTiles = new Set();
-    WAYPOINT_TILES.slice(1).forEach((target, index) => {
-      const start = WAYPOINT_TILES[index];
+    this.waypointTiles.slice(1).forEach((target, index) => {
+      const start = this.waypointTiles[index];
       const stepX = Math.sign(target.col - start.col);
       const stepY = Math.sign(target.row - start.row);
       let col = start.col;
@@ -39,7 +82,7 @@ export class GameMap {
         this.pathTiles.add(`${col},${row}`);
       }
     });
-    this.pathTiles.add(`${WAYPOINT_TILES[0].col},${WAYPOINT_TILES[0].row}`);
+    this.pathTiles.add(`${this.waypointTiles[0].col},${this.waypointTiles[0].row}`);
   }
 
   // 배경, 경로, 격자, 중앙 코어를 캔버스에 그립니다.
@@ -103,7 +146,7 @@ export class GameMap {
       row >= 0 &&
       row < GRID_ROWS &&
       !this.pathTiles.has(`${col},${row}`) &&
-      !(col === CORE_TILE.col && row === CORE_TILE.row)
+      !(col === this.coreTile.col && row === this.coreTile.row)
     );
   }
 
@@ -122,7 +165,7 @@ export class GameMap {
   }
 
   drawCore(ctx, coreHp, maxCoreHp) {
-    const center = this.getTileCenter(CORE_TILE.col, CORE_TILE.row);
+    const center = this.getTileCenter(this.coreTile.col, this.coreTile.row);
     const ratio = Math.max(0, coreHp / maxCoreHp);
     ctx.save();
     const hasImage = drawLoadedImage(ctx, "core", center.x - 37, center.y - 37, 74, 74);

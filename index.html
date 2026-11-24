@@ -46,7 +46,14 @@
               <span id="energy-bar"></span>
             </div>
           </div>
+          <div class="hud-item difficulty-item">
+            <span class="hud-label">난이도</span>
+            <strong id="difficulty-indicator">Normal</strong>
+          </div>
         </section>
+        <button id="speed-toggle" class="speed-button" type="button" aria-label="게임 배속 1배속">
+          1x
+        </button>
         <button id="start-wave" class="start-button" type="button">
           <span aria-hidden="true">▶</span>
           웨이브 시작
@@ -60,7 +67,10 @@
             <span class="live-dot" aria-hidden="true"></span>
             <span id="phase-label">건설 단계</span>
           </div>
-          <span class="board-hint">카드를 선택한 뒤 빈 타일을 클릭하세요</span>
+          <div class="board-heading-meta">
+            <span id="map-indicator" class="map-indicator">기본 경로</span>
+            <span class="board-hint">빈 타일 배치 · 같은 타워 카드로 강화</span>
+          </div>
         </div>
         <div class="canvas-wrap">
           <canvas
@@ -71,6 +81,15 @@
           ></canvas>
           <canvas id="interaction-overlay" width="1000" height="600" aria-hidden="true"></canvas>
         </div>
+      </section>
+
+      <section id="tower-upgrade-panel" class="tower-upgrade-panel" aria-label="타워 강화" hidden>
+        <div>
+          <p class="eyebrow">GUARDIAN UPGRADE</p>
+          <h2 id="upgrade-tower-name">타워 선택</h2>
+          <p id="upgrade-tower-stats" class="upgrade-stats"></p>
+        </div>
+        <button id="upgrade-tower-button" class="upgrade-button" type="button">강화</button>
       </section>
 
       <!-- 카드 선택과 웨이브 제어는 Canvas 밖의 HTML UI로 처리합니다. -->
@@ -86,6 +105,17 @@
         </div>
         <div class="deck-controls">
           <div id="hand" class="hand" aria-label="보유 카드"></div>
+          <div class="fusion-controls" aria-label="카드 합성">
+            <p id="fusion-status" class="fusion-status">같은 카드 3장을 손패에서 선택하세요.</p>
+            <div class="fusion-actions">
+              <button id="fusion-mode-button" class="fusion-button" type="button" aria-pressed="false">
+                합성 선택
+              </button>
+              <button id="fuse-cards-button" class="fusion-button fuse-button" type="button" disabled>
+                합성 (0/3)
+              </button>
+            </div>
+          </div>
         </div>
       </section>
       <footer class="footer-note">CORE GUARDIANS <span>·</span> HTML5 CANVAS PROTOTYPE</footer>
@@ -97,6 +127,18 @@
         <span class="modal-emblem" aria-hidden="true">◆</span>
         <h2 id="game-overlay-title">코어 가디언즈</h2>
         <p>전술 카드를 배치하고 10개의 웨이브로부터 코어를 지켜내세요.</p>
+        <label class="difficulty-control" for="map-select">
+          <span>맵 선택</span>
+          <select id="map-select"></select>
+        </label>
+        <label class="difficulty-control" for="difficulty-select">
+          <span>난이도 선택</span>
+          <select id="difficulty-select">
+            <option value="easy">Easy · 쉬움</option>
+            <option value="normal" selected>Normal · 보통</option>
+            <option value="hard">Hard · 어려움</option>
+          </select>
+        </label>
         <button id="start-game" class="start-button modal-action" type="button">게임 시작</button>
       </div>
     </section>
@@ -105,7 +147,7 @@
       <div class="modal-card reward-modal">
         <p class="eyebrow">WAVE CLEARED</p>
         <h2 id="reward-title">전리품 선택</h2>
-        <p>무작위 전술 카드 한 장을 덱에 추가하세요.</p>
+        <p>카드를 덱에 추가해 손패로 가져옵니다. 손패가 가득 차면 가장 오래된 카드가 버림 더미로 이동합니다.</p>
         <div id="reward-options" class="reward-options"></div>
       </div>
     </section>
@@ -115,6 +157,7 @@
         <p class="eyebrow">MISSION REPORT</p>
         <span id="result-emblem" class="modal-emblem" aria-hidden="true">◆</span>
         <h2 id="result-title">작전 종료</h2>
+        <p id="result-difficulty" class="result-difficulty"></p>
         <p id="result-message"></p>
         <button id="replay-game" class="start-button modal-action" type="button">다시 하기</button>
       </div>

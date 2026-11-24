@@ -38,6 +38,17 @@ export const TOWERS = {
   },
 };
 
+// 타워 강화 비용은 에너지 0이며, 손패의 동일 타워 카드가 실제 재료가 됩니다.
+export const TOWER_UPGRADES = {
+  2: { cost: 0, damageMultiplier: 1.5, fireRateMultiplier: 0.85, rangeMultiplier: 1.1 },
+  3: { cost: 0, damageMultiplier: 2.2, fireRateMultiplier: 0.72, rangeMultiplier: 1.25 },
+};
+
+// 세 장의 같은 등급 카드를 합치며, 카드 등급은 3단계까지 올릴 수 있습니다.
+export const CARD_FUSION_REQUIREMENT = 3;
+export const MAX_CARD_RANK = 3;
+export const SPELL_RANK_MULTIPLIERS = { 1: 1, 2: 1.5, 3: 2 };
+
 export const SPELLS = {
   energy_boost: {
     id: "energy_boost",
@@ -112,6 +123,31 @@ export const MONSTERS = {
   },
 };
 
+// 난이도 설정은 기본 몬스터 수치를 변경하지 않고 게임 시작 시 복사본에 적용합니다.
+export const DIFFICULTIES = {
+  easy: {
+    id: "easy",
+    name: "Easy",
+    monsterHpMultiplier: 0.75,
+    monsterSpeedMultiplier: 0.85,
+    spawnCountMultiplier: 0.75,
+  },
+  normal: {
+    id: "normal",
+    name: "Normal",
+    monsterHpMultiplier: 1,
+    monsterSpeedMultiplier: 1,
+    spawnCountMultiplier: 1,
+  },
+  hard: {
+    id: "hard",
+    name: "Hard",
+    monsterHpMultiplier: 1.4,
+    monsterSpeedMultiplier: 1.2,
+    spawnCountMultiplier: 1.35,
+  },
+};
+
 // 각 웨이브는 적 조합, 생성 간격, 클리어 보상을 정의합니다.
 export const WAVES = [
   { groups: [{ monster: "slime", count: 5 }], spawnInterval: 1.1, reward: 3 },
@@ -135,3 +171,45 @@ export const STARTING_HAND = [
   { kind: "spell", id: "global_freeze" },
   { kind: "spell", id: "orbital_strike" },
 ];
+
+// UI 설명과 실제 발동에서 같은 등급별 능력치를 사용하도록 계산을 공유합니다.
+export function getRankedCardData(card) {
+  const baseConfig = card.kind === "tower" ? TOWERS[card.id] : SPELLS[card.id];
+  if (!baseConfig) return null;
+
+  const rank = Math.min(MAX_CARD_RANK, Math.max(1, Math.floor(card.rank || 1)));
+  if (card.kind === "tower") {
+    const upgrade = TOWER_UPGRADES[rank];
+    if (!upgrade) return { ...baseConfig, rank };
+    const rankedConfig = {
+      ...baseConfig,
+      rank,
+      damage: Math.round(baseConfig.damage * upgrade.damageMultiplier),
+      fireRate: baseConfig.fireRate * upgrade.fireRateMultiplier,
+      range: Math.round(baseConfig.range * upgrade.rangeMultiplier),
+    };
+    rankedConfig.description =
+      `피해 ${rankedConfig.damage} · 사거리 ${rankedConfig.range} · 초당 공격 ${(1 / rankedConfig.fireRate).toFixed(1)}회`;
+    return rankedConfig;
+  }
+
+  const multiplier = SPELL_RANK_MULTIPLIERS[rank] ?? 1;
+  const rankedConfig = { ...baseConfig, rank };
+  ["value", "damage", "duration"].forEach((stat) => {
+    if (Number.isFinite(baseConfig[stat])) {
+      const precision = stat === "duration" ? 10 : 1;
+      rankedConfig[stat] = Math.round(baseConfig[stat] * multiplier * precision) / precision;
+    }
+  });
+  if (rank > 1) {
+    if (rankedConfig.effect === "energy") {
+      rankedConfig.description = `에너지를 ${rankedConfig.value} 즉시 회복합니다.`;
+    } else if (rankedConfig.effect === "freeze") {
+      rankedConfig.description = `맵 위의 모든 적을 ${rankedConfig.duration}초간 빙결합니다.`;
+    } else if (rankedConfig.effect === "targeted_damage") {
+      rankedConfig.description =
+        `지정한 위치 반경 ${rankedConfig.radius} 내 적에게 ${rankedConfig.damage} 피해를 줍니다.`;
+    }
+  }
+  return rankedConfig;
+}
